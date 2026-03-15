@@ -2512,13 +2512,33 @@ openclaw config set channels.feishu.footer.status true    <span class="comment">
 
     <div class="p">一次性覆盖最关键攻击面：<strong>Gateway 鉴权 + 工具最小权限 + 消息通道管控</strong></div>
 
+    <div class="aha">
+      <div class="aha-label">⚠️ 本地 vs 云端部署</div>
+      以下为<strong>本地部署</strong>基线。云端部署请将 <code>mode</code> 改为 <code>"gateway"</code>、<code>bind</code> 改为 <code>"0.0.0.0"</code> 或具体内网 IP，否则外部无法连入会掉线。
+    </div>
+
     <div class="p"><strong>完整 hardened baseline JSON</strong> —— 写入 <code>~/.openclaw/openclaw.json</code>：</div>
+
+    <div class="p"><strong>本地部署（默认）：</strong></div>
     <div class="code-block">{
   gateway: {
     mode: "local",
     bind: "loopback",
     auth: { mode: "token", token: "replace-with-long-random-token" }
-  },
+  }
+}</div>
+
+    <div class="p"><strong>云端部署：</strong></div>
+    <div class="code-block">{
+  gateway: {
+    mode: "gateway",
+    bind: "0.0.0.0",
+    auth: { mode: "token", token: "replace-with-long-random-token" }
+  }
+}</div>
+
+    <div class="p">其余字段两种部署方式通用：</div>
+    <div class="code-block">{
   session: { dmScope: "per-channel-peer" },
   tools: {
     profile: "messaging",
@@ -2567,6 +2587,7 @@ openclaw config set channels.feishu.footer.status true    <span class="comment">
     <div class="dp">
       <div class="dp-row"><div class="dp-icon"><i data-lucide="key"></i></div><div class="dp-txt"><strong>环境变量</strong>：<code>OPENCLAW_GATEWAY_TOKEN</code> 或 <code>OPENCLAW_GATEWAY_PASSWORD</code></div></div>
       <div class="dp-row"><div class="dp-icon"><i data-lucide="globe"></i></div><div class="dp-txt"><strong>bind 可选值</strong>：loopback（默认）、lan、tailnet、custom</div></div>
+      <div class="dp-row"><div class="dp-icon"><i data-lucide="alert-triangle"></i></div><div class="dp-txt"><strong>云端部署</strong>必须使用 <code>lan</code> 或 <code>0.0.0.0</code>，<code>loopback</code> 仅限本机</div></div>
       <div class="dp-row"><div class="dp-icon"><i data-lucide="lock"></i></div><div class="dp-txt"><strong>远程访问</strong>：推荐 SSH 隧道或 Tailscale Serve，不要暴露公网端口</div></div>
     </div>
 
